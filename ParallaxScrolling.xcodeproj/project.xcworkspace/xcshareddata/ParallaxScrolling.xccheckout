@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>FABC1BAD-F617-446F-97DD-343D316B9442</string>
+	<key>IDESourceControlProjectName</key>
+	<string>ParallaxScrolling</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>C4AFD0217F5BB6CA5C622200150C70691A910B52</key>
+		<string>github.com:joehsieh/ParallaxScrolling.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>ParallaxScrolling.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>C4AFD0217F5BB6CA5C622200150C70691A910B52</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>github.com:joehsieh/ParallaxScrolling.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>C4AFD0217F5BB6CA5C622200150C70691A910B52</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>C4AFD0217F5BB6CA5C622200150C70691A910B52</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ParallaxScrolling</string>
+		</dict>
+	</array>
+</dict>
+</plist>

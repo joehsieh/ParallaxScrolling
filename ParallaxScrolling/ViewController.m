@@ -31,7 +31,6 @@ static CGFloat const kFingerHeight = 44.0;
 static NSString * const kCellIdentifier = @"kCellIdentifier";
 
 @interface JHForegroundView : UIView
-
 @end
 
 @implementation JHForegroundView
@@ -47,8 +46,11 @@ static NSString * const kCellIdentifier = @"kCellIdentifier";
 @end
 
 @interface ViewController ()<UIScrollViewDelegate, JHParallaxViewDelegate, UITableViewDataSource, UITableViewDelegate>
+@property (nonatomic, strong) JHParallaxView *parallaxView;
 @property (nonatomic, strong) NSArray *playerInfos;
 @property (nonatomic, assign) BOOL isDiscoverButtonClicked;
+@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, assign) CGFloat lastContentOffsetY;
 @end
 
 @implementation ViewController
@@ -61,14 +63,12 @@ static NSString * const kCellIdentifier = @"kCellIdentifier";
     UIView *headerView = [self _createHeaderView];
     UIView *foregroundView = [self _createForegroundView];
     
-    self.playerInfos = @[@"Kobe Bryant", @"Derick Rose", @"Jeremy Lin", @"Stephen Curry"];
+    self.playerInfos = @[@"Kobe Bryant", @"Derick Rose", @"Jeremy Lin", @"Stephen Curry", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Cina"];
     
-    JHParallaxView *parallaxView = [[JHParallaxView alloc] initWithBackgroundView:backgroundView foregroundView:foregroundView];
-    parallaxView.headerView = headerView;
-    parallaxView.scrollViewDelegate = self;
-    parallaxView.effect = JHScollEffect | JHScaleEffect | JHBlurEffect;
-    parallaxView.delegate = self;
-    [self.view addSubview:parallaxView];
+    self.parallaxView = [[JHParallaxView alloc] initWithBackgroundView:backgroundView foregroundView:foregroundView delegate:self];
+    _parallaxView.headerView = headerView;
+    _parallaxView.effect = JHScollEffect | JHScaleEffect | JHBlurEffect;
+    [self.view addSubview:_parallaxView];
 }
 
 #pragma mark - Creates views
@@ -118,7 +118,7 @@ static NSString * const kCellIdentifier = @"kCellIdentifier";
     discoverButton.titleEdgeInsets = UIEdgeInsetsMake(2.0, 5.0, 2.0, 5.0);
     [headerView addSubview:discoverButton];
     
-    CGRect headerViewRect = CGRectMake(0, 0, CGRectGetWidth(self.view.frame), lastY);
+    CGRect headerViewRect = CGRectMake(0, 0, CGRectGetWidth(self.view.frame), CGRectGetMaxY(discoverButton.frame));
     headerView.frame = headerViewRect;
     return headerView;
 }
@@ -147,17 +147,17 @@ static NSString * const kCellIdentifier = @"kCellIdentifier";
     lastY += CGRectGetMaxY(shuffleButton.frame);
     [foregroundView addSubview:shuffleButton];
     
-    UITableView *tableView = [[UITableView alloc] init];
-    tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    rect = tableView.frame;
+    self.tableView = [[UITableView alloc] init];
+    _tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    rect = _tableView.frame;
     rect.origin.y = lastY;
-    tableView.frame = rect;
-    tableView.delegate = self;
-    tableView.dataSource = self;
-    [tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kCellIdentifier];
-
-    [foregroundView addSubview:tableView];
     
+    _tableView.frame = rect;
+    _tableView.delegate = self;
+    _tableView.dataSource = self;
+    [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kCellIdentifier];
+
+    [foregroundView addSubview:_tableView];
     return foregroundView;
 }
 
@@ -217,4 +217,16 @@ static NSString * const kCellIdentifier = @"kCellIdentifier";
     [[UIApplication sharedApplication] setStatusBarHidden:NO
                                             withAnimation:UIStatusBarAnimationSlide];
 }
+
+- (void)foregroundScrollViewDidScrollToBottom:(JHParallaxView *)inView
+{
+    
+}
+
+- (void)foregroundScrollViewDidScrollToAboveBottom:(JHParallaxView *)inView
+
+{
+    
+}
+
 @end

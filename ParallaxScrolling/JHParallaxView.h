@@ -33,21 +33,21 @@ JHParallaxEffect;
 
 #import <UIKit/UIKit.h>
 
-@protocol JHParallaxViewDelegate <NSObject>
+@protocol JHParallaxViewDelegate <UIScrollViewDelegate>
 - (void)parallaxViewDidScrollToCenter:(JHParallaxView *)inView;
 - (void)parallaxViewDidScrollToOrigianl:(JHParallaxView *)inView;
+- (void)foregroundScrollViewDidScrollToBottom:(JHParallaxView *)inView;
+- (void)foregroundScrollViewDidScrollToAboveBottom:(JHParallaxView *)inView;
 @end
 @interface JHParallaxView : UIView
 
 @property (nonatomic, readonly) UIScrollView *scrollView;
-@property (nonatomic, weak) id<UIScrollViewDelegate> scrollViewDelegate;
 @property (nonatomic, assign) CGFloat backgroundHeight;
 @property (nonatomic, assign) JHParallaxEffect effect;
-@property (nonatomic, weak) id <JHParallaxViewDelegate> delegate;
 @property (nonatomic, strong) UIView *headerView;
 
-- (id)initWithBackgroundView:(UIView *)backgroundView foregroundView:(UIView *)foregroundView;
+- (id)initWithBackgroundView:(UIView *)backgroundView foregroundView:(UIView *)foregroundView delegate:(id <JHParallaxViewDelegate>)delegate;
 
-- (id)initWithBackgroundView:(UIView *)backgroundView foregroundView:(UIView *)foregroundView frame:(CGRect)frame backgroundHeight:(CGFloat)height;
+- (id)initWithBackgroundView:(UIView *)backgroundView foregroundView:(UIView *)foregroundView frame:(CGRect)frame backgroundHeight:(CGFloat)height delegate:(id <JHParallaxViewDelegate>)delegate;
 
 @end

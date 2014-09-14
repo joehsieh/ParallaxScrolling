@@ -23,7 +23,6 @@
  SOFTWARE.
  */
 
-
 #import "JHParallaxView.h"
 
 static CGFloat const kDefaultBackgroundHeight = 250.0;
@@ -35,21 +34,23 @@ static CGFloat const kDefaultBackgroundHeight = 250.0;
 @property (nonatomic, strong) UIScrollView *headerScrollView;
 @property (nonatomic, strong) UIScrollView *foregroundScrollView;
 @property (nonatomic, strong) UIVisualEffectView *visualEffectView;
+@property (nonatomic, weak) id <JHParallaxViewDelegate> delegate;
 @end
 
 @implementation JHParallaxView
 
 #pragma mark - Constructor
 
-- (id)initWithBackgroundView:(UIView *)backgroundView foregroundView:(UIView *)foregroundView
+- (id)initWithBackgroundView:(UIView *)backgroundView foregroundView:(UIView *)foregroundView delegate:(id)delegate;
 {
-    return [self initWithBackgroundView:backgroundView foregroundView:foregroundView frame:[UIScreen mainScreen].bounds backgroundHeight:kDefaultBackgroundHeight];
+    return [self initWithBackgroundView:backgroundView foregroundView:foregroundView frame:[UIScreen mainScreen].bounds backgroundHeight:kDefaultBackgroundHeight delegate:delegate];
 }
 
-- (id)initWithBackgroundView:(UIView *)backgroundView foregroundView:(UIView *)foregroundView frame:(CGRect)frame backgroundHeight:(CGFloat)height
+- (id)initWithBackgroundView:(UIView *)backgroundView foregroundView:(UIView *)foregroundView frame:(CGRect)frame backgroundHeight:(CGFloat)height delegate:(id)delegate;
 {
     self = [super init];
     if (self) {
+        _delegate = delegate;
         backgroundView.frame = CGRectMake(0, 0, CGRectGetWidth(frame), height);
         foregroundView.frame = CGRectMake(0, 0, CGRectGetWidth(frame), CGRectGetHeight(frame));
         _backgroundView = backgroundView;
@@ -66,6 +67,8 @@ static CGFloat const kDefaultBackgroundHeight = 250.0;
         
         _foregroundScrollView = [[UIScrollView alloc] init];
         _foregroundScrollView.backgroundColor = [UIColor clearColor];
+        _foregroundScrollView.delaysContentTouches = NO;
+        _foregroundScrollView.canCancelContentTouches = YES;
         _foregroundScrollView.delegate = self;
         [_foregroundScrollView addSubview:_foregroundView];
         [self addSubview:_foregroundScrollView];
@@ -84,13 +87,6 @@ static CGFloat const kDefaultBackgroundHeight = 250.0;
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     }
     return self;
-}
-
-#pragma mark - Overrides NSObject methods
-
-- (id)forwardingTargetForSelector:(SEL)aSelector
-{
-    return _scrollViewDelegate;
 }
 
 #pragma mark - Overrides UIView methods
@@ -113,15 +109,10 @@ static CGFloat const kDefaultBackgroundHeight = 250.0;
 {
     CGPoint pointInHeaderView = [_headerView convertPoint:point fromView:self];
     if ([_headerView pointInside:pointInHeaderView withEvent:event]) {
-        CGFloat visibleBackgroundViewHeight =
-            _backgroundHeight - _headerScrollView.contentOffset.y;
-        if (point.y < visibleBackgroundViewHeight) {
-            for (UIView *subView in _headerView.subviews) {
-                if (CGRectContainsPoint(subView.frame, pointInHeaderView) && [[subView class]isSubclassOfClass:[UIControl class]]) {
-                    return [_headerView hitTest:pointInHeaderView withEvent:event];
-                }
+        for (UIView *subView in _headerView.subviews) {
+            if (CGRectContainsPoint(subView.frame, pointInHeaderView) && [[subView class]isSubclassOfClass:[UIControl class]]) {
+                return [_headerView hitTest:pointInHeaderView withEvent:event];
             }
-            return [_foregroundView hitTest:point withEvent:event];
         }
     }
     return [super hitTest:point withEvent:event];
@@ -133,8 +124,8 @@ static CGFloat const kDefaultBackgroundHeight = 250.0;
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     [self updateContentOffset];
-    if ([_scrollViewDelegate respondsToSelector:_cmd]) {
-        [_scrollViewDelegate scrollViewDidScroll:scrollView];
+    if ([_delegate respondsToSelector:_cmd]) {
+        [_delegate scrollViewDidScroll:scrollView];
     }
 }
 
@@ -159,9 +150,9 @@ static CGFloat const kDefaultBackgroundHeight = 250.0;
     CGSizeMake(CGRectGetWidth(_foregroundView.frame),
                CGRectGetHeight(_foregroundView.frame) + _backgroundHeight);
     _foregroundView.frame = CGRectMake(0.0f,
-                                           _backgroundHeight,
-                                           CGRectGetWidth(_foregroundView.frame),
-                                           CGRectGetHeight(_foregroundView.frame));
+                                       _backgroundHeight,
+                                       CGRectGetWidth(_foregroundView.frame),
+                                       CGRectGetHeight(_foregroundView.frame));
 }
 
 - (void)updateHeaderFrame
@@ -170,16 +161,16 @@ static CGFloat const kDefaultBackgroundHeight = 250.0;
     _headerScrollView.contentSize = self.bounds.size;
     _headerScrollView.contentOffset	= CGPointZero;
     _headerView.frame = CGRectMake(0.0f,
-                                       (_backgroundHeight - CGRectGetHeight(_headerView.frame)) / 2.0,
-                                       CGRectGetWidth(_backgroundView.frame),
-                                       CGRectGetHeight(_backgroundView.frame));
+                                   (_backgroundHeight - CGRectGetHeight(_headerView.frame)) / 2.0,
+                                   CGRectGetWidth(_headerView.frame),
+                                   CGRectGetHeight(_headerView.frame));
 }
 
 #pragma mark - Updates contentOffset for scrollViews
 
 - (void)updateContentOffset
 {
-    CGFloat offsetY   = _foregroundScrollView.contentOffset.y;
+    CGFloat offsetY = _foregroundScrollView.contentOffset.y;
     CGFloat threshold = _backgroundHeight;
     BOOL isForegroundScrollViewPullDown = (offsetY - 0.0f <= 0);
     if (isForegroundScrollViewPullDown) {
@@ -189,15 +180,10 @@ static CGFloat const kDefaultBackgroundHeight = 250.0;
                 self.backgroundScrollView.contentOffset = CGPointMake(0.0f, floorf(offsetY/2));
                 self.headerScrollView.contentOffset = CGPointMake(0.0f, floorf(offsetY/2));
                 if (ABS(offsetY) > ABS(threshold) / 4.0) {
-                    if (_delegate) {
-                        [_delegate parallaxViewDidScrollToCenter:self];
-                    }
-                }else {
-                    if (_delegate) {
-                        [_delegate parallaxViewDidScrollToOrigianl:self];
-                    }
+                    [_delegate parallaxViewDidScrollToCenter:self];
+                } else {
+                    [_delegate parallaxViewDidScrollToOrigianl:self];
                 }
-                
             }
             if (_effect & JHScaleEffect) {
                 CGRect rect = _backgroundView.bounds;
@@ -225,7 +211,13 @@ static CGFloat const kDefaultBackgroundHeight = 250.0;
         }
     }
     else {
-        self.backgroundScrollView.contentOffset = CGPointMake(0.0f, offsetY);
+        if (offsetY >= kDefaultBackgroundHeight) {
+            [_delegate foregroundScrollViewDidScrollToBottom:self];
+        }
+        else {
+            [_delegate foregroundScrollViewDidScrollToAboveBottom:self];
+        }
+        self.backgroundScrollView.contentOffset = CGPointMake(0.0f, offsetY / 3.0);
     }
 }
 
@@ -264,7 +256,7 @@ static CGFloat const kDefaultBackgroundHeight = 250.0;
     _headerScrollView.canCancelContentTouches = YES;
     _headerScrollView.backgroundColor = [UIColor clearColor];
     [_headerScrollView addSubview:_headerView];
-    [_backgroundScrollView addSubview:_headerScrollView];
+    [self insertSubview:_headerScrollView aboveSubview:_backgroundScrollView];
     [self updateHeaderFrame];
 }
 
