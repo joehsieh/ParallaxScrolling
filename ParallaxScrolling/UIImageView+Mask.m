@@ -30,7 +30,7 @@
 - (void)applyRoundedMask
 {
     self.clipsToBounds = YES;
-    self.layer.borderColor = [UIColor clearColor].CGColor;
+    self.layer.borderColor = [UIColor whiteColor].CGColor;
     self.layer.borderWidth = 1.0;
     self.layer.cornerRadius = CGRectGetWidth(self.frame) / 2;
 }

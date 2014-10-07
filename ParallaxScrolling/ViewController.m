@@ -23,17 +23,19 @@
  SOFTWARE.
  */
 #import "ViewController.h"
-#import "JHParallaxView.h"
 #import "UIImageView+Mask.h"
 #import "JHUtility.h"
+#import "UIImage+ImageEffects.h"
 
 static CGFloat const kFingerHeight = 44.0;
 static NSString * const kCellIdentifier = @"kCellIdentifier";
+static CGFloat const kHeaderHeight = 300.0;
 
-@interface JHForegroundView : UIView
+@interface JHShuffleButtonView : UIView
+
 @end
 
-@implementation JHForegroundView
+@implementation JHShuffleButtonView
 
 - (void)drawRect:(CGRect)rect
 {
@@ -45,12 +47,13 @@ static NSString * const kCellIdentifier = @"kCellIdentifier";
 
 @end
 
-@interface ViewController ()<UIScrollViewDelegate, JHParallaxViewDelegate, UITableViewDataSource, UITableViewDelegate>
-@property (nonatomic, strong) JHParallaxView *parallaxView;
+@interface ViewController ()<UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, strong) NSArray *playerInfos;
 @property (nonatomic, assign) BOOL isDiscoverButtonClicked;
 @property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, assign) CGFloat lastContentOffsetY;
+@property (nonatomic, strong) UIView *shuffleButtonView;
+@property (nonatomic, strong) UIView *headerForegroundView;
+@property (nonatomic, strong) UIView *headerBackgroundView;
 @end
 
 @implementation ViewController
@@ -58,26 +61,41 @@ static NSString * const kCellIdentifier = @"kCellIdentifier";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+	UITableView *tableView = [[UITableView alloc] init];
+	tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    tableView.frame = self.view.bounds;
+	tableView.delegate = self;
+	tableView.dataSource = self;
+	[tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kCellIdentifier];
+	self.tableView = tableView;
+	self.tableView.contentInset = UIEdgeInsetsMake(kHeaderHeight, 0, 0, 0);
+	[self.view addSubview:self.tableView];
+
+    UIView *backgroundView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    backgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
-    UIView *backgroundView = [self _createBackgroundView];
-    UIView *headerView = [self _createHeaderView];
-    UIView *foregroundView = [self _createForegroundView];
+    self.headerBackgroundView = [self _createHeaderBackgroundView];
+    [backgroundView addSubview:self.headerBackgroundView];
     
-    self.playerInfos = @[@"Kobe Bryant", @"Derick Rose", @"Jeremy Lin", @"Stephen Curry", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Kobe Bryant", @"Cina"];
+    self.headerForegroundView = [self _createHeaderForegroundView];
+	[backgroundView addSubview:self.headerForegroundView];
     
-    self.parallaxView = [[JHParallaxView alloc] initWithBackgroundView:backgroundView foregroundView:foregroundView delegate:self];
-    _parallaxView.headerView = headerView;
-    _parallaxView.effect = JHScollEffect | JHScaleEffect | JHBlurEffect;
-    [self.view addSubview:_parallaxView];
+	self.tableView.backgroundView = backgroundView;
+    self.shuffleButtonView = [self _createShuffleButtonView];
+	self.shuffleButtonView.frame = CGRectMake(0, -kFingerHeight, CGRectGetWidth([UIScreen mainScreen].bounds), kFingerHeight);
+	[self.tableView addSubview:self.shuffleButtonView];
+    
+    self.playerInfos = @[@"Kobe Bryant", @"Derick Rose", @"Jeremy Lin", @"Stephen Curry", @"Kevin Love", @"Kyrie Irving", @"LeBron James", @"Rudy Gay",@"Kobe Bryant", @"Derick Rose", @"Jeremy Lin", @"Stephen Curry", @"Kevin Love", @"Kyrie Irving", @"LeBron James", @"Rudy Gay"];
+
 }
 
 #pragma mark - Creates views
 
-- (UIView *)_createHeaderView
+- (UIView *)_createHeaderForegroundView
 {
     CGFloat headerSquareLength = 128.0;
     
-    UIImageView *headerImageView = [[UIImageView alloc] initWithFrame:CGRectMake(floorf((CGRectGetWidth(self.view.bounds) - headerSquareLength) / 2.0), 0.0, headerSquareLength, headerSquareLength)];
+    UIImageView *headerImageView = [[UIImageView alloc] initWithFrame:CGRectMake(floorf((CGRectGetWidth(self.view.bounds) - headerSquareLength) / 2.0), 30.0, headerSquareLength, headerSquareLength)];
     
     UIImage *backgroundImage = [UIImage imageNamed:@"jordanHeader"];
     headerImageView.image = backgroundImage;
@@ -118,15 +136,16 @@ static NSString * const kCellIdentifier = @"kCellIdentifier";
     discoverButton.titleEdgeInsets = UIEdgeInsetsMake(2.0, 5.0, 2.0, 5.0);
     [headerView addSubview:discoverButton];
     
-    CGRect headerViewRect = CGRectMake(0, 0, CGRectGetWidth(self.view.frame), CGRectGetMaxY(discoverButton.frame));
+    lastY += CGRectGetHeight(discoverButton.frame);
+    CGRect headerViewRect = CGRectMake(0, 0, CGRectGetWidth(self.view.frame), lastY);
     headerView.frame = headerViewRect;
     return headerView;
 }
 
-- (UIView *)_createForegroundView
+- (UIView *)_createShuffleButtonView
 {
-    JHForegroundView *foregroundView = [[JHForegroundView alloc] init];
-    foregroundView.backgroundColor = [UIColor clearColor];
+    JHShuffleButtonView *shuffleButtonView = [[JHShuffleButtonView alloc] init];
+    shuffleButtonView.backgroundColor = [UIColor clearColor];
     CGFloat lastY = 0.0f;
     UIButton *shuffleButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [shuffleButton setTitle:JHSTR(@"Shffle") forState:UIControlStateNormal];
@@ -145,27 +164,17 @@ static NSString * const kCellIdentifier = @"kCellIdentifier";
     shuffleButton.backgroundColor = [UIColor orangeColor];
     
     lastY += CGRectGetMaxY(shuffleButton.frame);
-    [foregroundView addSubview:shuffleButton];
+    [shuffleButtonView addSubview:shuffleButton];
     
-    self.tableView = [[UITableView alloc] init];
-    _tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    rect = _tableView.frame;
-    rect.origin.y = lastY;
-    
-    _tableView.frame = rect;
-    _tableView.delegate = self;
-    _tableView.dataSource = self;
-    [_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kCellIdentifier];
-
-    [foregroundView addSubview:_tableView];
-    return foregroundView;
+    return shuffleButtonView;
 }
 
-- (UIView *)_createBackgroundView
+- (UIView *)_createHeaderBackgroundView
 {
     UIImage *backgroundImage = [UIImage imageNamed:@"jordanBackground"];
-    UIImageView *backgroundImageView = [[UIImageView alloc] init];
-    backgroundImageView.contentMode = UIViewContentModeScaleAspectFit;
+    backgroundImage = [backgroundImage applyBlurWithRadius:1.0f tintColor:[UIColor colorWithWhite:0.12 alpha:0.72] saturationDeltaFactor:1.3f maskImage:nil];
+    UIImageView *backgroundImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, CGRectGetWidth([UIScreen mainScreen].bounds), kHeaderHeight * 1.5f)];
+    backgroundImageView.contentMode = UIViewContentModeScaleAspectFill;
     backgroundImageView.image = backgroundImage;
     return backgroundImageView;
 }
@@ -204,29 +213,28 @@ static NSString * const kCellIdentifier = @"kCellIdentifier";
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
-#pragma mark - JHParallaxViewDelegate
-
-- (void)parallaxViewDidScrollToCenter:(JHParallaxView *)inView
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    [[UIApplication sharedApplication] setStatusBarHidden:YES
-                                            withAnimation:UIStatusBarAnimationSlide];
-}
-
-- (void)parallaxViewDidScrollToOrigianl:(JHParallaxView *)inView
-{
-    [[UIApplication sharedApplication] setStatusBarHidden:NO
-                                            withAnimation:UIStatusBarAnimationSlide];
-}
-
-- (void)foregroundScrollViewDidScrollToBottom:(JHParallaxView *)inView
-{
+	CGPoint offset = scrollView.contentOffset;
+    CGFloat scrollViewTopOffsetY = -kFingerHeight;
+    BOOL isScrolledAboveTop = (offset.y > scrollViewTopOffsetY);
+    self.shuffleButtonView.backgroundColor = isScrolledAboveTop ? [UIColor blackColor] : [UIColor clearColor];
+    CGFloat y =  isScrolledAboveTop ? -kFingerHeight + (offset.y - scrollViewTopOffsetY) : -kFingerHeight;
+    CGRect rect = self.shuffleButtonView.frame;
+    rect.origin.y = y;
+    self.shuffleButtonView.frame = rect;
     
+	if (-offset.y >= kHeaderHeight) {
+        CGFloat headerForegroundViewLastY = offset.y + kHeaderHeight;
+		CGRect headerForegroundViewRect = self.headerForegroundView.frame;
+		headerForegroundViewRect.origin.y = floor(-headerForegroundViewLastY / 3.0f);
+		self.headerForegroundView.frame = headerForegroundViewRect;
+	}
+    else {
+        CGFloat headerBackgroundViewLastY = offset.y + kHeaderHeight;
+        CGRect headerBackgroundViewRect = self.headerBackgroundView.frame;
+        headerBackgroundViewRect.origin.y = floor(-headerBackgroundViewLastY / 3.0f);
+        self.headerBackgroundView.frame = headerBackgroundViewRect;
+    }
 }
-
-- (void)foregroundScrollViewDidScrollToAboveBottom:(JHParallaxView *)inView
-
-{
-    
-}
-
 @end

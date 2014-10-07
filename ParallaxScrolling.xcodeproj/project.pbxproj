@@ -12,9 +12,9 @@
 		530B51E719B8DA6700DCBB59 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 530B51E619B8DA6700DCBB59 /* ViewController.m */; };
 		530B51EC19B8DA6700DCBB59 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 530B51EB19B8DA6700DCBB59 /* Images.xcassets */; };
 		530B51F819B8DA6700DCBB59 /* ParallaxScrollingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 530B51F719B8DA6700DCBB59 /* ParallaxScrollingTests.m */; };
-		530B520319B8DA7500DCBB59 /* JHParallaxView.m in Sources */ = {isa = PBXBuildFile; fileRef = 530B520219B8DA7500DCBB59 /* JHParallaxView.m */; };
 		530B520719B8DA8C00DCBB59 /* JHUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 530B520619B8DA8C00DCBB59 /* JHUtility.m */; };
 		530B521219B8DCC100DCBB59 /* UIImageView+Mask.m in Sources */ = {isa = PBXBuildFile; fileRef = 530B521119B8DCC100DCBB59 /* UIImageView+Mask.m */; };
+		53F3013119E303C5001141C5 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F3013019E303C5001141C5 /* UIImage+ImageEffects.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,12 +39,12 @@
 		530B51F119B8DA6700DCBB59 /* ParallaxScrollingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ParallaxScrollingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		530B51F619B8DA6700DCBB59 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		530B51F719B8DA6700DCBB59 /* ParallaxScrollingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ParallaxScrollingTests.m; sourceTree = "<group>"; };
-		530B520119B8DA7500DCBB59 /* JHParallaxView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JHParallaxView.h; sourceTree = "<group>"; };
-		530B520219B8DA7500DCBB59 /* JHParallaxView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JHParallaxView.m; sourceTree = "<group>"; };
 		530B520519B8DA8C00DCBB59 /* JHUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JHUtility.h; sourceTree = "<group>"; };
 		530B520619B8DA8C00DCBB59 /* JHUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JHUtility.m; sourceTree = "<group>"; };
 		530B521019B8DCC100DCBB59 /* UIImageView+Mask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+Mask.h"; sourceTree = "<group>"; };
 		530B521119B8DCC100DCBB59 /* UIImageView+Mask.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+Mask.m"; sourceTree = "<group>"; };
+		53F3012F19E303C5001141C5 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
+		53F3013019E303C5001141C5 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,7 +88,6 @@
 			children = (
 				530B520D19B8DB4300DCBB59 /* Controller */,
 				530B520819B8DA9000DCBB59 /* Utility */,
-				530B520419B8DA7B00DCBB59 /* View */,
 				530B51E219B8DA6700DCBB59 /* AppDelegate.h */,
 				530B51E319B8DA6700DCBB59 /* AppDelegate.m */,
 				530B51EB19B8DA6700DCBB59 /* Images.xcassets */,
@@ -123,18 +122,11 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		530B520419B8DA7B00DCBB59 /* View */ = {
-			isa = PBXGroup;
-			children = (
-				530B520119B8DA7500DCBB59 /* JHParallaxView.h */,
-				530B520219B8DA7500DCBB59 /* JHParallaxView.m */,
-			);
-			name = View;
-			sourceTree = "<group>";
-		};
 		530B520819B8DA9000DCBB59 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				53F3012F19E303C5001141C5 /* UIImage+ImageEffects.h */,
+				53F3013019E303C5001141C5 /* UIImage+ImageEffects.m */,
 				530B521019B8DCC100DCBB59 /* UIImageView+Mask.h */,
 				530B521119B8DCC100DCBB59 /* UIImageView+Mask.m */,
 				530B520519B8DA8C00DCBB59 /* JHUtility.h */,
@@ -253,7 +245,7 @@
 				530B520719B8DA8C00DCBB59 /* JHUtility.m in Sources */,
 				530B51E719B8DA6700DCBB59 /* ViewController.m in Sources */,
 				530B521219B8DCC100DCBB59 /* UIImageView+Mask.m in Sources */,
-				530B520319B8DA7500DCBB59 /* JHParallaxView.m in Sources */,
+				53F3013119E303C5001141C5 /* UIImage+ImageEffects.m in Sources */,
 				530B51E419B8DA6700DCBB59 /* AppDelegate.m in Sources */,
 				530B51E119B8DA6700DCBB59 /* main.m in Sources */,
 			);
@@ -429,6 +421,7 @@
 				530B51FD19B8DA6700DCBB59 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		530B51FE19B8DA6700DCBB59 /* Build configuration list for PBXNativeTarget "ParallaxScrollingTests" */ = {
 			isa = XCConfigurationList;
@@ -437,6 +430,7 @@
 				530B520019B8DA6700DCBB59 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
