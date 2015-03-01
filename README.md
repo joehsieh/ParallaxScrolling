@@ -1,7 +1,7 @@
 ParallaxScrolling
 =================
 
-![Demo](https://github.com/joehsieh/ParallaxScrolling/blob/master/demo.gif)
+![Demo](https://raw.githubusercontent.com/joehsieh/ParallaxScrolling/master/demo.gif)
 
 #What is parallax scrolling ？
 
